@@ -1,0 +1,51 @@
+{
+  "EVAL_USAGE": {
+    "title": "Arbitrary Code Execution via eval()",
+    "cwe": "CWE-95",
+    "severity": "CRITICAL",
+    "description": "The eval() function dynamically executes string inputs as Python code, allowing attackers to execute arbitrary system commands.",
+    "fix": "import ast\n# SECURE FIX: Safely evaluate literal structures (strings, numbers, tuples, lists, dicts, booleans, and None) without code execution risk\nresult = ast.literal_eval(user_input)"
+  },
+  "COMMAND_INJECTION": {
+    "title": "OS Command Injection via os.system()",
+    "cwe": "CWE-78",
+    "severity": "CRITICAL",
+    "description": "Passing unconstrained input directly to os.system() allows command chaining through shell metacharacters (e.g., ';', '&&', '|').",
+    "fix": "import subprocess\nimport shlex\n# SECURE FIX: Use subprocess.run with argument lists and shell=False to prevent shell parameter parsing\nsubprocess.run(shlex.split(command), check=True)"
+  },
+  "HARDCODED_SECRET": {
+    "title": "Use of Hard-coded Sensitive Credentials",
+    "cwe": "CWE-798",
+    "severity": "HIGH",
+    "description": "Hardcoding passwords, API tokens, or encryption keys in source code exposes secrets via revision control systems and compiled assets.",
+    "fix": "import os\n# SECURE FIX: Retrieve sensitive credentials dynamically from environment variables\nAPI_KEY = os.getenv('API_KEY')\nif not API_KEY:\n    raise ValueError('Required environment variable API_KEY is missing.')"
+  },
+  "SQL_INJECTION": {
+    "title": "SQL Injection via String Formatting",
+    "cwe": "CWE-89",
+    "severity": "CRITICAL",
+    "description": "Constructing SQL queries using string concatenation or f-strings bypasses query sanitization and enables unauthorized database access.",
+    "fix": "# SECURE FIX: Use parameterized queries to isolate SQL command structure from user parameters\ncursor.execute('SELECT * FROM users WHERE username = ? AND status = ?', (username, 'active'))"
+  },
+  "INSECURE_DESERIALIZATION": {
+    "title": "Insecure Deserialization via pickle",
+    "cwe": "CWE-502",
+    "severity": "CRITICAL",
+    "description": "Deserializing untrusted data with the pickle module can trigger arbitrary code execution during object instantiation.",
+    "fix": "import json\n# SECURE FIX: Use safe, standard data serialization formats like JSON instead of Python pickle\ndata = json.loads(untrusted_payload)"
+  },
+  "WEAK_CRYPTO": {
+    "title": "Use of Weak Cryptographic Hash (MD5/SHA1)",
+    "cwe": "CWE-327",
+    "severity": "MEDIUM",
+    "description": "MD5 and SHA-1 algorithms are vulnerable to collision attacks and should not be used for security-critical hashing or password storage.",
+    "fix": "import hashlib\n# SECURE FIX: Upgrade hash operations to SHA-256 or secure key derivation functions (e.g., Argon2, bcrypt, pbkdf2)\nhash_object = hashlib.sha256(data.encode()).hexdigest()"
+  },
+  "WEAK_RANDOM": {
+    "title": "Use of Cryptographically Weak Pseudo-Random Generator",
+    "cwe": "CWE-338",
+    "severity": "MEDIUM",
+    "description": "The standard random module uses the Mersenne Twister engine, which is entirely predictable if outputs are observed.",
+    "fix": "import secrets\n# SECURE FIX: Use the secrets module for security-sensitive operations like token generation\nsecure_token = secrets.token_hex(32)"
+  }
+}
